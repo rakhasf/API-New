@@ -13,7 +13,8 @@ Route::middleware(['auth:sanctum'])->group(function (){
     Route::delete('/posts/{id}', [PostController::class, 'delete'])->middleware(['post.owner']);
 
     Route::post('/comment', [CommentController::class, 'store']);
-    Route::post('/comment/{id}', [CommentController::class, 'update'])->middleware('comment.owner');
+    Route::patch('/comment/{id}', [CommentController::class, 'update'])->middleware('comment.owner');
+    Route::delete('/comment/{id}', [CommentController::class, 'delete'])->middleware('comment.owner');
     
 });
 Route::get('/posts2/{id}', [PostController::class, 'show_too']);

@@ -15,10 +15,21 @@ class Post extends Model
         'title',
         'article_content',
         'author',
+        'image'
     ];
 
     public function writer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author', 'id');
+    }
+
+    /**
+     * Get all of the comments for the Post
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'post_id', 'id');
     }
 }

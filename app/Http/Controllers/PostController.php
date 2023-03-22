@@ -7,17 +7,19 @@ use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
     public function index(){
         $posts = Post::all();
         // return response()->json(['data' => $posts]);
-        return PostResource::collection($posts);
+        // return PostResource::collection($posts);
+        return PostDetailResource::collection($posts->loadMissing('writer:id,username', 'comments:id,post_id,user_id,comment_content'));
     }
 
     public function show($id){
-        $post = Post::with('writer:id,username')->findOrFail($id);
+        $post = Post::with('writer:id,username', 'comments:id,post_id,user_id,comment_content')->findOrFail($id);
         return new PostDetailResource($post);
     }
     public function show2($id){
@@ -32,6 +34,15 @@ class PostController extends Controller
         ]);
 
         // return response()->json('sudah dapat digunakan');
+        $image = null;
+        if ($request -> file) {
+            $fileName = $this->generateRandomString();
+            $extension = $request->file->extension();
+
+            $image = $fileName. '.' .$extension;
+            Storage::putFileAs('image', $request->file, $image);
+        }
+
         $request['author'] = Auth::user()->id;
 
         $post = Post::create($request->all());
@@ -46,8 +57,19 @@ class PostController extends Controller
         'article_content' => 'required',
     ]);
 
-    return response()->json('STATUS: USABLE');
-    return response()->json('sudah dapat digunakan');
+     $image = null;
+        if ($request -> file) {
+            $fileName = $this->generateRandomString();
+            $extension = $request->file->extension();
+
+            $image = $fileName. '.' .$extension;
+            Storage::putFileAs('image', $request->file, $image);
+        }
+
+    // return response()->json('sudah dapat digunakan');
+    $request['image'] = $image;
+
+    // return response()->json('STATUS: USABLE');
     $post = Post::findOrFail($id);
     $post->update($request->all());
 
@@ -63,6 +85,17 @@ class PostController extends Controller
         return response()->json([
         'message' => "data successfully deleted"
         ]);
+    }
+
+     // https://stackoverflow.com/questions/4356289/php-random-string-generator
+    function generateRandomString($length = 20) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 
 }

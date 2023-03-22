@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Post;
+use App\Models\Article;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class PostOwner
+class ArticleOwner
 {
     /**
      * Handle an incoming request.
@@ -21,9 +21,9 @@ class PostOwner
         // dd("ini menggunakan middleware");
 
         $currentUser  = Auth::user();
-        $post = Post::findOrFail($request->id);
+        $article = Article::findOrFail($request->id);
 
-        if ($post -> author != $currentUser->id) {
+        if ($article -> author != $currentUser->id) {
             return response()->json([
                 'message' => 'data not found'
             ], 404);

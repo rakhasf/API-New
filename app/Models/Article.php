@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Post extends Model
+class Article extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -24,12 +24,12 @@ class Post extends Model
     }
 
     /**
-     * Get all of the comments for the Post
+     * Get all of the comments for the ARTICLE :)
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class, 'post_id', 'id');
+        return $this->hasMany(Comment::class, 'article_id', 'id');
     }
 }

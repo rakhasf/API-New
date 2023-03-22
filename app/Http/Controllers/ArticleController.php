@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PostDetailResource;
-use App\Http\Resources\PostResource;
-use App\Models\Post;
+use App\Http\Resources\ArticleDetails;
+use App\Http\Resources\ArticleResource;
+use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class PostController extends Controller
+class ArticleController extends Controller
 {
     public function index(){
-        $posts = Post::all();
-        // return response()->json(['data' => $posts]);
-        // return PostResource::collection($posts);
-        return PostDetailResource::collection($posts->loadMissing('writer:id,username', 'comments:id,post_id,user_id,comment_content'));
+        $articles = Article::all();
+
+        return ArticleDetails::collection($articles->loadMissing('writer:id,username',
+        'comments:id,article_id,user_id,comment_content'));
     }
 
     public function show($id){
-        $post = Post::with('writer:id,username', 'comments:id,post_id,user_id,comment_content')->findOrFail($id);
-        return new PostDetailResource($post);
+        $article = Article::with('writer:id,username', 'comments:id,article_id,user_id,comment_content')->findOrFail($id);
+        return new ArticleDetails($article);
     }
     public function show2($id){
-        $post = Post::findOrFail($id);
-        return new PostDetailResource($post);
+        $articlet = Article::findOrFail($id);
+        return new ArticleDetails($article);
     }
 
     public function store(Request $request){
@@ -33,7 +33,6 @@ class PostController extends Controller
             'article_content' => 'required',
         ]);
 
-        // return response()->json('sudah dapat digunakan');
         $image = null;
         if ($request -> file) {
             $fileName = $this->generateRandomString();
@@ -45,8 +44,8 @@ class PostController extends Controller
 
         $request['author'] = Auth::user()->id;
 
-        $post = Post::create($request->all());
-        return new PostDetailResource($post->loadMissing('writer:id,username'));
+        $article = Article::create($request->all());
+        return new ArticleDetails($article->loadMissing('writer:id,username'));
 
         
     }
@@ -66,21 +65,18 @@ class PostController extends Controller
             Storage::putFileAs('image', $request->file, $image);
         }
 
-    // return response()->json('sudah dapat digunakan');
     $request['image'] = $image;
 
-    // return response()->json('STATUS: USABLE');
-    $post = Post::findOrFail($id);
-    $post->update($request->all());
+    $article = Article::findOrFail($id);
+    $article->update($request->all());
 
-    // return response()->json('sudah dapat digunakan');
-    return new PostDetailResource($post->loadMissing('writer:id,username'));
+    return new ArticleDetails($article->loadMissing('writer:id,username'));
 
     }
 
     public function delete($id){
-        $post = Post::findOrFail($id);
-        $post->delete();
+        $article = Article::findOrFail($id);
+        $article->delete();
 
         return response()->json([
         'message' => "data successfully deleted"

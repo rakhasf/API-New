@@ -1,20 +1,20 @@
 <?php
 
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function (){
-    Route::get('/posts', [PostController::class, 'index']);
-    Route::get('/posts/{id}', [PostController::class, 'show']);
-    Route::post('/posts', [PostController::class, 'store']);
-    Route::patch('/posts/{id}', [PostController::class, 'update'])->middleware(['post.owner']);
-    Route::delete('/posts/{id}', [PostController::class, 'delete'])->middleware(['post.owner']);
+    Route::get('/articles', [ArticleController::class, 'index']);
+    Route::get('/articles/{id}', [ArticleController::class, 'show']);
+    Route::post('/articles', [ArticleController::class, 'store']);
+    Route::patch('/articles/{id}', [ArticleController::class, 'update'])->middleware(['article.owner']);
+    Route::delete('/articles/{id}', [ArticleController::class, 'delete'])->middleware(['article.owner']);
 
     Route::post('/comment', [CommentController::class, 'store']);
     Route::patch('/comment/{id}', [CommentController::class, 'update'])->middleware('comment.owner');
     Route::delete('/comment/{id}', [CommentController::class, 'delete'])->middleware('comment.owner');
     
 });
-Route::get('/posts2/{id}', [PostController::class, 'show_too']);
+Route::get('/articles2/{id}', [ArticleController::class, 'show_too']);
